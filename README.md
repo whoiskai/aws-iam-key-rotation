@@ -7,4 +7,15 @@ Following assumptions
 - User has a `force-mfa` policy that only allows him to rotate keys if authenticated via a MFA session
 - User does not have AWS console access
 
+## Quick start
+
+```
+./aws-rotate-iam-key-mfa.sh <PROFILE_NAME> <USER_NAME>
+```
+
+| Input        | Description                        |
+| ------------ | ---------------------------------- |
+| PROFILE_NAME | profile name in your ~/.aws/confg  |
+| USER_NAME    | your AWS user name, needed for MFA |
+
 Inspired by https://github.com/rhyeal/aws-rotate-iam-keys
