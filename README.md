@@ -10,12 +10,11 @@ Following assumptions
 ## Quick start
 
 ```
-./aws-rotate-iam-key-mfa.sh <PROFILE_NAME> <USER_NAME>
+./aws-rotate-iam-key-mfa.sh <PROFILE_NAME>
 ```
 
 | Input        | Description                        |
 | ------------ | ---------------------------------- |
 | PROFILE_NAME | profile name in your ~/.aws/confg  |
-| USER_NAME    | your AWS user name, needed for MFA |
 
 Inspired by https://github.com/rhyeal/aws-rotate-iam-keys
