@@ -2,11 +2,12 @@
 
 function mfa_session() {
   PROFILE_NAME=$1
-  USER_NAME=$2
-  MFA=$3
+  MFA=$2
 
   echo "Starting MFA session..."
-  ACCOUNT_ID=$(AWS_PROFILE=$PROFILE_NAME aws sts get-caller-identity | jq -r .Account)
+  CALLER_ID=$(AWS_PROFILE=$PROFILE_NAME aws sts get-caller-identity)
+  ACCOUNT_ID=$(echo $CALLER_ID | jq -r .Account)
+  USER_NAME=$(echo $CALLER_ID | jq -r .Arn | cut -d "/" -f 2)
   CREDS=$(AWS_PROFILE=$PROFILE_NAME aws sts get-session-token \
       --serial-number arn:aws:iam::${ACCOUNT_ID}:mfa/${USER_NAME} \
       --token-code ${MFA})
@@ -37,14 +38,13 @@ function mfa_session() {
 
 function rotate() {
   PROFILE_NAME=$1
-  USER_NAME=$2
 
   export AWS_PAGER=""
 
   echo "Start IAM key rotation for MFA user"
   echo "-------------------"
   read -p "MFA token 1: " MFA1
-  mfa_session $PROFILE_NAME $USER_NAME $MFA1
+  mfa_session $PROFILE_NAME $MFA1
   echo "-------------------"
 
   echo "Verifying credentials"
@@ -77,7 +77,7 @@ function rotate() {
       echo "Please wait for the next refresh of MFA token"
       read -p "MFA token 2: " MFA2
     done    
-    mfa_session $PROFILE_NAME $USER_NAME $MFA2
+    mfa_session $PROFILE_NAME $MFA2
     for i in $(seq 1 20); do
       ERROR=$(aws iam list-access-keys 2>&1 1>/dev/null) && break || sleep 3
     done
@@ -91,7 +91,6 @@ function rotate() {
     fi
     echo "Verified new access key"
     echo "-------------------"
-
 
     echo "Updating profile: ${PROFILE_NAME}"
     aws configure set aws_access_key_id $NEW_ACCESS_KEY_ID --profile ${PROFILE_NAME}
@@ -110,4 +109,4 @@ function rotate() {
   fi
 }
 
-rotate $1 $2
+rotate $1
