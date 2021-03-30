@@ -18,3 +18,60 @@ Following assumptions
 | PROFILE_NAME | profile name in your ~/.aws/confg  |
 
 Inspired by https://github.com/rhyeal/aws-rotate-iam-keys
+
+
+## Required policies
+In order for the user to manage their own access keys, you need either policies applied on the user. **Recommend** using the MFA as the default. 
+
+### MFA
+For use with `aws-rotate-iam-key-mfa.sh`
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "IAMAccessKeyMFA",
+      "Effect": "Allow",
+      "Action": [
+        "iam:DeleteAccessKey",
+        "iam:UpdateAccessKey",
+        "iam:CreateAccessKey",
+        "iam:ListAccessKeys"
+      ],
+      "Resource": "arn:aws:iam::*:user/${aws:username}",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "true"
+        },
+        "NumericLessThan": {
+          "aws:MultiFactorAuthAge": 3600
+        }
+      }
+    }
+  ]
+}
+```
+
+
+### Without MFA
+For use with `aws-rotate-iam-key.sh`
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "IAMAccessKey",
+      "Effect": "Allow",
+      "Action": [
+        "iam:DeleteAccessKey",
+        "iam:UpdateAccessKey",
+        "iam:CreateAccessKey",
+        "iam:ListAccessKeys"
+      ],
+      "Resource": "arn:aws:iam::*:user/${aws:username}"
+    }
+  ]
+}
+```
