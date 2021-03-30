@@ -1,11 +1,10 @@
 # aws-iam-key-rotation
 
-This is a script for rotating AWS Access/Secret Key for MFA users. It is meant to be ran on the user side; because it is much easier to scale when each user can rotate their own keys.
+This is a script for rotating AWS Access/Secret Key for (non)MFA users. It is meant to be ran on the user side; because it is much easier to scale when each user can rotate their own keys.
 
 Following assumptions
 
-- User has a `force-mfa` policy that only allows him to rotate keys if authenticated via a MFA session
-- User does not have AWS console access
+- User does not have AWS console access (else just use the console)
 
 ## Quick start
 
@@ -21,9 +20,10 @@ Inspired by https://github.com/rhyeal/aws-rotate-iam-keys
 
 
 ## Required policies
-In order for the user to manage their own access keys, you need either policies applied on the user. **Recommend** using the MFA as the default. 
+In order for the user to manage their own access keys, you need either policies applied on the user. 
+**Recommend**: using the MFA as the default. 
 
-### MFA
+### With MFA
 For use with `aws-rotate-iam-key-mfa.sh`
 
 ```
